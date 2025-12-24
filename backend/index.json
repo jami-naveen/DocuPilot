@@ -1,0 +1,59 @@
+{
+  "name": "rag-index",
+  "fields": [
+    { "name": "id", "type": "Edm.String", "key": true, "searchable": false },
+    { "name": "content", "type": "Edm.String", "searchable": true, "analyzer": "standard.lucene", "retrievable": true },
+    { "name": "chunk_id", "type": "Edm.String", "filterable": true, "sortable": false, "facetable": false, "searchable": false },
+    { "name": "source_path", "type": "Edm.String", "filterable": true, "sortable": true, "searchable": false },
+    { "name": "chunk_order", "type": "Edm.Int32", "filterable": true, "sortable": true },
+    { "name": "metadata", "type": "Edm.String", "searchable": true },
+    {
+      "name": "embedding",
+      "type": "Collection(Edm.Single)",
+      "searchable": true,
+      "dimensions": 3072,
+      "vectorSearchProfile": "defaultProfile"
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "vector-algorithm",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "defaultProfile",
+        "algorithm": "vector-algorithm"
+      }
+    ]
+  },
+  "semantic": {
+    "configurations": [
+      {
+        "name": "semantic-config",
+        "prioritizedFields": {
+          "titleField": null,
+          "prioritizedContentFields": [
+            { "fieldName": "content" }
+          ],
+          "prioritizedKeywordsFields": []
+        }
+      }
+    ]
+  },
+  "suggesters": [
+    {
+      "name": "sg",
+      "searchMode": "analyzingInfixMatching",
+      "sourceFields": [ "content" ]
+    }
+  ]
+}

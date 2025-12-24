@@ -1,0 +1,9 @@
+echo '{"location":"eastus","sku":{"name":"standard"},"properties":{"partitionCount":1,"replicaCount":1,"hostingMode":"default","publicNetworkAccess":"Enabled","vectorSearch":{"vectorSearchConfigurations":[{"name":"standard-vector-config","kind":"standard"}]}}}' > search-service.json
+
+az provider register --namespace Microsoft.Search
+
+az rest --method PUT --uri "https://management.azure.com/subscriptions/d08c32af-b01b-4977-8e9c-7a47a5680219/resourceGroups/value-at-risk/providers/Microsoft.Search/searchServices/capstone-poc?api-version=2025-05-01" --body @search-service.json
+
+
+PS /home/naveen> $body=$(Get-Content -Raw ~/index.json); az rest --method PUT --uri "https://capstone-poc.search.windows.net/indexes/rag-index?api-version=2024-05-01-preview" --headers "Content-Type=application/json" "api-key=<admin-key>" --resource https://search.azure.com --body "$body"          
+Bad Request({"error":{"code":"InvalidRequestParameter","message":"The request is invalid. Details: definition : The field 'embedding' uses a vector search algorithm configuration 'defaultProfile' which is not defined.","details":[{"code":"UnknownVectorAlgorithmConfiguration","message":"The field 'embedding' uses a vector search algorithm configuration 'defaultProfile' which is not defined. Parameters: definition"}]}})
